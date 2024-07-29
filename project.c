@@ -31,7 +31,7 @@ int main()
         printf("\n» Lutfen yapmak istediginiz islemi seciniz: ");
         scanf("%d", &menu);
 
-        do // Geçersiz girişler için tekrar kontro
+        do // Geçersiz girişler için tekrar kontrol
         {
             if (menu != 1 && menu != 2 && menu != 3 && menu != 4 && menu != 5)
             {
