@@ -132,7 +132,7 @@ int main()
                     {
                         printf("║ %d %s", i + 1, foundLines[i]);
                     }
-                    printf("╚══════════════════════════╩════════════════════════╩══════════════════════╝\n");
+                    printf("╚═══╩══════════════════════╩════════════════════════╩══════════════════════╝\n");
                     int secim;
                     printf("» Silmek istediginiz kisiyi seciniz (1-%d): ", foundCount);
                     scanf("%d", &secim);
@@ -271,7 +271,7 @@ int main()
                     {
                         printf("║ %d %s", i + 1, foundLines[i]);
                     }
-                    printf("╚══════════════════════════╩════════════════════════╩══════════════════════╝\n");
+                    printf("╚═══╩══════════════════════╩════════════════════════╩══════════════════════╝\n");
                     int secim;
                     printf("» Duzenlemek istediginiz kisiyi seciniz (1-%d): ", foundCount);
                     scanf("%d", &secim);
