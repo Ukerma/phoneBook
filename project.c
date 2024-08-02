@@ -210,8 +210,9 @@ int main()
         case 4:
         { // Kişi düzenleme işlemi
             printf("\n» Rehber Acildi Kisi Duzenleme Islemine Baslayabilirsiniz.\n\n");
-
             FILE *fp = fopen("kisi_listesi.txt", "r");
+            rewind(fp);
+
             char c;
             if (fp == NULL)
             {
@@ -219,7 +220,6 @@ int main()
             }
             else
             { // Kişi listesi görüntüleniyor
-                printf("\n» Rehber Acildi Kisi Listesi Goruntuleniyor!\n\n");
                 printf("╔══════════════════════╦════╣ Kisi Listesi ╠════╦══════════════════════╗\n");
                 printf("║ %-20s ║ %-22s ║ %-20s ║\n", "Ad", "Soyad", "Numara");
                 c = fgetc(fp);
@@ -233,27 +233,27 @@ int main()
             }
 
             fclose(fp);
-            int kisiBulundu = 0;
 
             do
             {
                 char duzenlenecekIsim[25];
-                // Düzenlenecek kişinin ismini alıyoruz
-                printf("╔═══════════════════════════╣ Kisi Duzenleme ╠════════════════════════════\n");
-                printf("║ » Duzenlemek istediginiz kisinin ismini giriniz: ");
-                scanf("%24s", duzenlenecekIsim);
-                printf("╚═════════════════════════════════════════════════════════════════════════\n");
-
                 FILE *fp = fopen("kisi_listesi.txt", "r");
-                FILE *fs = fopen("gecici_dosya.txt", "w");
+                rewind(fp);
+                // Düzenlenecek kişinin ismini alıyoruz
+                printf("╔═══════════════════════════╣ Kisi Duzenleme ╠═══════════════════════════\n");
+                printf("║ » Duzenlemek istediginiz kisinin ismini giriniz: ");
+                scanf("%s", duzenlenecekIsim);
+                printf("╚═══════════════════════════════════════════════════════════════════════\n");
 
                 char line[2000];
-                int foundCount = 0;
-                char foundLines[100][2000]; // Max 100 eşleşen kayıt
+                int lineCount = 0, foundCount = 0;
+                char foundLines[100][2000]; // Max 100 matching entries
                 // Dosyayı tarayıp eşleşen kayıtları buluyoruz
                 while (fgets(line, sizeof(line), fp) != NULL)
                 {
-                    if (strstr(line, duzenlenecekIsim) != NULL)
+                    lineCount++;
+                    char *namePosition = strstr(line, duzenlenecekIsim);
+                    if (namePosition != NULL && strncasecmp(namePosition, duzenlenecekIsim, strlen(duzenlenecekIsim)) == 0)
                     {
                         strcpy(foundLines[foundCount++], line);
                     }
@@ -281,39 +281,39 @@ int main()
                         printf("\n» Gecersiz secim.\n");
                     }
                     else
-                    { // Seçilen kişiyi düzenleme
+                    {
                         FILE *fp = fopen("kisi_listesi.txt", "r");
                         FILE *fs = fopen("gecici_dosya.txt", "w");
-                        int currentLine = 0;
-                        int selectedLine = 0;
+                        rewind(fp);
 
+                        int currentLine = 0;
                         while (fgets(line, sizeof(line), fp) != NULL)
                         {
                             currentLine++;
-                            if (currentLine == secim)
+                            if (currentLine != lineCount - foundCount + secim)
                             {
-                                selectedLine = currentLine;
-                                char ad[25], soyad[25], numara[25];
-                                printf("║ » Yeni Ad: ");
-                                scanf("%24s", ad);
-                                printf("║ » Yeni Soyad: ");
-                                scanf("%24s", soyad);
-                                printf("║ » Yeni Numara: ");
-                                scanf("%24s", numara);
-                                printf("╚═════════════════════════════════════════════════════════════════════════\n");
-                                // Yeni veriyi dosyaya yazıyoruz
-                                fprintf(fs, "║ » %-18s ║ » %-20s ║ » %-18s ║\n", ad, soyad, numara);
+                                fprintf(fs, "%s", line);
                             }
                             else
                             {
-                                fprintf(fs, "%s", line);
+                                kisiBulundu = 1;
+                                printf("\n» Yeni bilgileri giriniz:\n");
+                                printf("╔═══════════════════════════╣ Numara Duzenleme ╠════════════════════════════\n");
+                                printf("║ » Ad:");
+                                scanf("%s", ad);
+                                printf("║ » Soyad:");
+                                scanf("%s", soyad);
+                                printf("║ » Numara:");
+                                scanf("%s", numara);
+                                printf("╚════════════════════════════════════════════════════════════════════════\n");
+                                fprintf(fs, "║ » %-18s ║ » %-20s ║ » %-18s ║\n", ad, soyad, numara);
                             }
                         }
 
                         fclose(fp);
                         fclose(fs);
 
-                        if (selectedLine == 0)
+                        if (kisiBulundu == 0)
                         {
                             printf("\n» Kisi duzenleme islemi basarisiz.\n");
                             remove("gecici_dosya.txt");
